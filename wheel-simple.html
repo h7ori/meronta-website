@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roda Putar Karonta - Versi Sederhana</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 2rem auto;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+
+        .wheel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(
+                #4CAF50 0deg 180deg,
+                #f44336 180deg 360deg
+            );
+            border-radius: 50%;
+        }
+
+        .wheel-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .cuci-text {
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            transform: translate(-50%, -50%);
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .ga-cuci-text {
+            position: absolute;
+            bottom: 25%;
+            right: 25%;
+            transform: translate(50%, 50%);
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #ffd700;
+            z-index: 10;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .spin-button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 2rem 0;
+        }
+
+        .spin-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+        }
+
+        .spin-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: none;
+            max-width: 400px;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .result h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .result p {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .back-button {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .wheel-container {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .cuci-text, .ga-cuci-text {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 Roda Putar Karonta</h1>
+        <p>Putar roda untuk mendapatkan hasil yang mengejutkan!</p>
+    </div>
+
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel">
+            <div class="cuci-text">CUCI</div>
+            <div class="ga-cuci-text">GA CUCI</div>
+        </div>
+    </div>
+
+    <button class="spin-button" id="spinButton" onclick="spinWheel()">
+        PUTAR RODA
+    </button>
+
+    <div class="result" id="result">
+        <h2 id="resultTitle"></h2>
+        <p id="resultMessage"></p>
+        <a href="index.html" class="back-button">Kembali ke Beranda</a>
+    </div>
+
+    <script>
+        let isSpinning = false;
+        const wheel = document.getElementById('wheel');
+        const spinButton = document.getElementById('spinButton');
+        const result = document.getElementById('result');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultMessage = document.getElementById('resultMessage');
+
+        function spinWheel() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            spinButton.disabled = true;
+            spinButton.textContent = 'MEMUTAR...';
+            
+            // Sembunyikan hasil sebelumnya
+            result.classList.remove('show');
+            
+            // Generate random rotation (multiple full rotations + final position)
+            const spins = 5 + Math.random() * 5; // 5-10 full rotations
+            
+            // Untuk probabilitas 50-50 yang lebih adil
+            const randomResult = Math.random(); // 0-1
+            let finalAngle;
+            
+            if (randomResult < 0.5) {
+                // CUCI: angle antara 0-180 derajat
+                finalAngle = Math.random() * 180;
+            } else {
+                // GA CUCI: angle antara 180-360 derajat
+                finalAngle = 180 + Math.random() * 180;
+            }
+            
+            const totalRotation = spins * 360 + finalAngle;
+            
+            // Apply rotation
+            wheel.style.transform = `rotate(${totalRotation}deg)`;
+            
+            // Determine result after animation
+            setTimeout(() => {
+                let result;
+                
+                // Determine which section the pointer lands on
+                if (finalAngle >= 0 && finalAngle < 180) {
+                    result = 'CUCI';
+                } else {
+                    result = 'GA CUCI';
+                }
+                
+                showResult(result);
+                isSpinning = false;
+                spinButton.disabled = false;
+                spinButton.textContent = 'PUTAR LAGI';
+            }, 4000);
+        }
+
+        function showResult(result) {
+            if (result === 'CUCI') {
+                resultTitle.textContent = '🎉 SELAMAT!';
+                resultMessage.textContent = 'Anda mendapatkan CUCI! Waktunya untuk membersihkan diri dan merasa segar kembali.';
+            } else {
+                resultTitle.textContent = '😅 GA CUCI';
+                resultMessage.textContent = 'Anda mendapatkan GA CUCI! Mungkin hari ini adalah hari untuk bersantai dan tidak perlu cuci.';
+            }
+            
+            result.classList.add('show');
+        }
+    </script>
+</body>
+</html> 
